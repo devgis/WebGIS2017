@@ -1,0 +1,76 @@
+﻿
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>景区查询</title>
+
+    <script src="3.20/init.js"></script>
+    <script>
+        require([
+        "dojo/dom", "dojo/on",
+        "esri/tasks/query", "esri/tasks/QueryTask", "dojo/domReady!"
+      ], function (dom, on, Query, QueryTask) {
+
+          var queryTask = new QueryTask("http://localhost:6080/arcgis/rest/services/hbmap/MapServer/2");
+
+          var query = new Query();
+          query.returnGeometry = false;
+          query.outFields = [
+          "NAME", "分类", "jb", "SSS", "最受欢迎的"
+        ];
+
+          on(dom.byId("execute"), "click", execute);
+
+          function execute() {
+
+              //var index = dom.byId("jqType").selectedIndex;
+              //var typename = dom.byId("jqType").options[index].value;
+              var tname = dom.byId("jqType").value; //dojo写法
+              //alert(tname);
+              //var typename = document.getElementById("jqType").value; //html写法
+              //alert(typename);
+              var where = ("jb = '" + tname + "'");
+              var name = dom.byId("jqName").value;
+              if (name !== null && name !== undefined && name !== '') {
+                  where += ("and NAME like '%" + name + "%'");
+              }
+
+              query.where = where; // dom.byId("jqName").value;
+              queryTask.execute(query, showResults);
+          }
+
+          function showResults(results) {
+              var resultItems = [];
+              var resultCount = results.features.length;
+              for (var i = 0; i < resultCount; i++) {
+                  var featureAttributes = results.features[i].attributes;
+                  for (var attr in featureAttributes) {
+                      resultItems.push("<b>" + attr + ":</b>  " + featureAttributes[attr] + "<br>");
+                  }
+                  resultItems.push("<br>");
+              }
+              dom.byId("info").innerHTML = resultItems.join("");
+          }
+      });
+    </script>
+  </head>
+
+  <body>
+   类别：
+   <select id="jqType"> 
+<option value="5A">5A</option> 
+<option value="4A">4A</option>
+<option value="其他">其他</option> 
+</select> 
+    名称:
+    <input type="text" id="jqName" value="">
+    <input id="execute" type="button" value="查询">
+    <br />
+    <br />
+    <div id="info" style="padding:1px; margin:1px; background-color:#eee;">
+    </div>
+  </body>
+</html>

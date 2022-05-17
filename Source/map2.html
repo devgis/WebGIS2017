@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="3.20/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+    </style>
+    <script src="3.20/init.js"></script>
+    <script>
+        var map, csv;
+
+        require(["esri/map", "esri/layers/ArcGISTiledMapServiceLayer", "dojo/domReady!"],
+        function (Map, Tiled) {
+            map = new Map("map");
+
+            //, {
+            //slider: true,
+            //sliderPosition: "bottom-right", //bottom-left //top-right
+            //sliderStyle: "small", //large small
+            //logo: false,
+            //center: [108.32, 108.32]
+            //zoom: 10,
+            //minZoom: 2
+
+            // }
+
+            /*
+            var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("http://localhost:6080/arcgis/rest/services/hbmap/MapServer", {
+              "opacity": 0.5,
+              "imageParameters": imageParameters
+          });
+
+          map.addLayer(dynamicMapServiceLayer);
+            */
+            var tiled = new Tiled("http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineCommunity/MapServer/");
+            map.addLayer(tiled);
+        }
+      );
+
+        require([
+        "esri/map",
+        "esri/layers/CSVLayer",
+        "esri/Color",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/renderers/SimpleRenderer",
+        "esri/InfoTemplate",
+        "esri/urlUtils",
+        "dojo/domReady!"
+      ], function (
+        Map, CSVLayer, Color, SimpleMarkerSymbol, SimpleRenderer, InfoTemplate, urlUtils
+      ) {
+          urlUtils.addProxyRule({
+              proxyUrl: "/proxy/",
+              urlPrefix: "earthquake.usgs.gov"
+          });
+
+
+      });
+
+
+        function setPolygon() {
+            var polygon = new Polygon(new SpatialReference({ wkid: 4326 }));
+            //添加多边形的各个角的顶点坐标，注意：首尾要链接，也就是说，第一个点和最后一个点要一致  
+            polygon.addRing([[-180, -90], [-180, 90], [180, 90], [180, -90], [-180, -90]]);
+            var graphic = new Graphic(circle, symbol);
+            graLayer.add(graphic);
+        }
+        /*
+        require(["esri/map", 
+        "esri/layers/CSVLayer",
+        "esri/Color",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/layers/ArcGISTiledMapServiceLayer",
+        "esri/renderers/SimpleRenderer",
+        "esri/InfoTemplate",
+        "esri/urlUtils",
+        "dojo/domReady!"],
+        function(Map, Tiled) {
+        map = new Map("map");
+
+
+        var tiled = new Tiled("http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineCommunity/MapServer/");
+        map.addLayer(tiled);
+        }
+        );
+        */
+
+
+        /*
+        require([
+        "esri/map", 
+        "esri/layers/CSVLayer",
+        "esri/Color",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/layers/ArcGISTiledMapServiceLayer",
+        "esri/renderers/SimpleRenderer",
+        "esri/InfoTemplate",
+        "esri/urlUtils",
+        "dojo/domReady!"
+        ], function(
+        Map, CSVLayer, Color, SimpleMarkerSymbol, SimpleRenderer, InfoTemplate, urlUtils
+        ) {
+        
+        });
+   
+        map = new Map("map");
+
+
+        var tiled = new Tiled("http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineCommunity/MapServer/");
+        map.addLayer(tiled);
+ 
+        csv = new CSVLayer("http://192.168.1.133/test.csv", {
+        copyright: "USGS.gov"
+        });
+        var orangeRed = new Color([238, 69, 0, 0.5]); // hex is #ff4500
+        var marker = new SimpleMarkerSymbol("solid", 15, null, orangeRed);
+        var renderer = new SimpleRenderer(marker);
+        csv.setRenderer(renderer);
+        var template = new InfoTemplate("${type}", "${place}");
+        csv.setInfoTemplate(template);
+        map.addLayer(csv);
+        */
+    </script>
+  </head>
+
+
+  <body>
+    <div id="map"></div>
+  </body>
+</html>
